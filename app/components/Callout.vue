@@ -35,7 +35,7 @@ aside {
   @apply grid gap-row-1 border rounded-lg px-3 py-2;
 
   &[data-variant='info'] {
-    @apply bg-blue-500/10 border border-blue-600/30 text-blue-700 dark:text-blue-400;
+    @apply border-blue-600/30 bg-blue-500/10 text-blue-700 dark:text-blue-400;
   }
 
   &[data-variant='warning'] {
@@ -81,7 +81,8 @@ aside {
 
 .icon {
   grid-area: icon;
-  margin-block-start: calc((1lh - 1rem) / 2);
+  margin-block-start: calc((1lh - 1em) / 2);
+  @apply size-1em!;
 
   [data-variant='info'] & {
     @apply i-lucide:info;
@@ -94,14 +95,6 @@ aside {
   [data-variant='danger'] & {
     @apply i-lucide:octagon-alert;
   }
-
-  [data-size='sm'] & {
-    @apply size-3;
-  }
-
-  [data-size='md'] & {
-    @apply size-4;
-  }
 }
 
 .title {
@@ -111,6 +104,7 @@ aside {
 
 .body {
   grid-area: body;
+  @apply flex flex-col gap-2;
 
   [data-size='sm'] & {
     @apply text-xs;
