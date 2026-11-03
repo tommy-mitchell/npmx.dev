@@ -13,6 +13,9 @@ const meta = {
       control: 'select',
       options: ['sm', 'md'],
     },
+    icon: {
+      control: 'text',
+    },
     default: {
       control: 'text',
     },
@@ -28,9 +31,7 @@ const meta = {
   },
   render: args => ({
     components: { Callout },
-    setup() {
-      return { args }
-    },
+    setup: () => ({ args }),
     template: `
       <Callout :variant="args.variant" :icon="args.icon" :size="args.size">
         <template v-if="args.title" #title>{{ args.title }}</template>
@@ -67,7 +68,7 @@ export const Danger: Story = {
 const loremIpsum =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
 
-/** No title, with icon. */
+/** No title, with custom icon. */
 export const NoTitle: Story = {
   args: {
     title: undefined,

@@ -49,7 +49,7 @@ aside {
       @apply decoration-blue-500/60 dark:decoration-blue-400/50;
     }
 
-    & :where(code, pre) {
+    & :where(code:not(pre code), pre) {
       @apply bg-blue-800/10 dark:bg-blue-950/30 border-blue-700/20;
     }
   }
@@ -61,7 +61,7 @@ aside {
       @apply decoration-amber-600/60 dark:decoration-amber-400/50;
     }
 
-    & :where(code, pre) {
+    & :where(code:not(pre code), pre) {
       @apply bg-amber-800/10 dark:bg-amber-950/30 border-amber-700/20;
     }
   }
@@ -82,6 +82,10 @@ aside {
   &:has(.icon):not(:has(.title)) {
     grid-template-areas: 'icon body';
     grid-template-columns: max-content minmax(0, 1fr);
+
+    &[data-size='sm'] {
+      @apply text-xs;
+    }
   }
 
   /* Header: title only */
