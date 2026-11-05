@@ -5,9 +5,13 @@ const meta = {
   component: Callout,
   tags: ['autodocs'],
   argTypes: {
+    severity: {
+      control: 'select',
+      options: ['none', 'info', 'warning', 'danger', 'notice'],
+    },
     variant: {
       control: 'select',
-      options: ['info', 'warning', 'danger'],
+      options: ['block', 'accordion'],
     },
     size: {
       control: 'select',
@@ -22,9 +26,12 @@ const meta = {
     title: {
       control: 'text',
     },
+    accordionLabel: {
+      control: 'text',
+    },
   },
   args: {
-    variant: 'info',
+    severity: 'info',
     icon: undefined,
     title: 'Heads up',
     default: 'Something you might want to know about this package.',
@@ -33,8 +40,9 @@ const meta = {
     components: { Callout },
     setup: () => ({ args }),
     template: `
-      <Callout :variant="args.variant" :icon="args.icon" :size="args.size">
+      <Callout :severity="args.severity" :variant="args.variant" :icon="args.icon" :size="args.size">
         <template v-if="args.title" #title>{{ args.title }}</template>
+        <template v-if="args.accordionLabel" #accordionLabel>{{ args.accordionLabel }}</template>
         {{ args.default }}
       </Callout>
     `,
@@ -50,7 +58,7 @@ export const Info: Story = {}
 /** Warning variant. */
 export const Warning: Story = {
   args: {
-    variant: 'warning',
+    severity: 'warning',
     title: 'Something went wrong',
     default: 'We could not load this data. Please try again.',
   },
@@ -59,7 +67,7 @@ export const Warning: Story = {
 /** Danger variant. */
 export const Danger: Story = {
   args: {
-    variant: 'danger',
+    severity: 'danger',
     title: 'Something went wrong',
     default: 'We could not load this data. Please try again.',
   },
@@ -101,4 +109,37 @@ export const Small: Story = {
     title: undefined,
     default: 'A short message with no heading.',
   },
+}
+
+export const Accordion: Story = {
+  args: {
+    severity: 'danger',
+    variant: 'accordion',
+    title: 'Vulnerabilities found',
+    accordionLabel: '2 high, 1 moderate',
+    default: loremIpsum,
+  },
+}
+
+export const Replacement: Story = {
+  args: {
+    icon: 'i-lucide:lightbulb',
+    title: 'You might not need this dependency',
+    default: 'This package has been flagged as having more performant alternatives.',
+    // @ts-expect-error -- code is not a prop
+    code: '<Callout />',
+  },
+  render: args => ({
+    components: { Callout },
+    setup: () => ({ args }),
+    template: `
+      <Callout :severity="args.severity" :variant="args.variant" :icon="args.icon" :size="args.size">
+        <template v-if="args.title" #title>{{ args.title }}</template>
+        <template v-if="args.accordionLabel" #accordionLabel>{{ args.accordionLabel }}</template>
+        <p>{{ args.default }} <a href="#" class="underline hover:text-white">Learn more</a></p>
+        <p>Example <code class="p-1 rounded border">code</code>:</p>
+        <pre class="p-2 rounded border text-sm"><code>{{ args.code }}</code></pre>
+      </Callout>
+    `,
+  }),
 }
