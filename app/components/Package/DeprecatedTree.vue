@@ -9,108 +9,23 @@ const { data: analysisData, status } = useDependencyAnalysis(
   () => props.version,
 )
 
-const isExpanded = shallowRef(false)
-
-const {
-  visibleItems: visiblePackages,
-  hasMore: hasMorePackages,
-  expand: expandPackages,
-} = useVisibleItems(() => analysisData.value?.deprecatedPackages ?? [], 5)
-
-const hasDeprecated = computed(
-  () => analysisData.value?.deprecatedPackages && analysisData.value.deprecatedPackages.length > 0,
-)
-
-// Banner color - purple for deprecated
-const bannerColor = 'border-purple-600/40 bg-purple-500/10 text-purple-700 dark:text-purple-400'
-
-// Styling for each depth level
-const depthStyles = {
-  root: {
-    bg: 'bg-purple-500/5 border-is-2 border-is-purple-600',
-    text: 'text-fg',
-  },
-  direct: {
-    bg: 'bg-purple-500/5 border-is-2 border-is-purple-500',
-    text: 'text-fg-muted',
-  },
-  transitive: {
-    bg: 'bg-purple-500/5 border-is-2 border-is-purple-400',
-    text: 'text-fg-muted',
-  },
-} as const
-
-function getDepthStyle(depth: DependencyDepth) {
-  return depthStyles[depth] || depthStyles.transitive
-}
+const deprecatedPackages = computed(() => analysisData.value?.deprecatedPackages ?? [])
+const hasDeprecated = computed(() => deprecatedPackages.value.length > 0)
 </script>
 
 <template>
   <section v-if="status === 'success' && hasDeprecated" class="relative">
-    <div class="rounded-lg border overflow-hidden" :class="bannerColor">
-      <!-- Header -->
-      <button
-        type="button"
-        class="w-full flex items-center justify-between gap-3 px-4 py-3 text-start transition-colors duration-200 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/70"
-        :aria-expanded="isExpanded"
-        aria-controls="deprecated-tree-details"
-        @click="isExpanded = !isExpanded"
-      >
-        <span class="flex items-center gap-2 min-w-0">
-          <span class="i-lucide:octagon-alert w-4 h-4 shrink-0" aria-hidden="true" />
-          <span class="font-mono text-sm font-medium truncate">
-            {{ $t('package.deprecated.tree_found', analysisData!.deprecatedPackages.length) }}
-          </span>
-        </span>
-        <span
-          class="i-lucide:chevron-down w-4 h-4 transition-transform duration-200 shrink-0"
-          :class="{ 'rotate-180': isExpanded }"
-          aria-hidden="true"
-        />
-      </button>
-
-      <!-- Expandable details -->
-      <div
-        v-show="isExpanded"
-        id="deprecated-tree-details"
-        class="border-t border-border bg-bg-subtle"
-      >
-        <ul class="divide-y divide-border list-none m-0 p-0">
-          <li
-            v-for="pkg in visiblePackages"
-            :key="`${pkg.name}@${pkg.version}`"
-            class="px-4 py-3"
-            :class="getDepthStyle(pkg.depth).bg"
-          >
-            <div class="flex items-center gap-2 mb-1">
-              <!-- Path badge -->
-              <DependencyPathPopup v-if="pkg.path && pkg.path.length > 1" :path="pkg.path" />
-
-              <NuxtLink
-                :to="packageRoute(pkg.name, pkg.version)"
-                class="font-mono text-sm font-medium hover:underline truncate py-4"
-                :class="getDepthStyle(pkg.depth).text"
-              >
-                {{ pkg.name }}@{{ pkg.version }}
-              </NuxtLink>
-            </div>
-            <p class="text-xs text-fg-muted m-0 line-clamp-2">
-              {{ pkg.message }}
-            </p>
-          </li>
-        </ul>
-
-        <button
-          v-if="hasMorePackages"
-          type="button"
-          class="w-full px-4 py-2 text-xs font-mono text-fg-muted hover:text-fg border-t border-border transition-colors duration-200"
-          @click="expandPackages"
-        >
-          {{
-            $t('package.deprecated.show_all', { count: analysisData!.deprecatedPackages.length })
-          }}
-        </button>
-      </div>
-    </div>
+    <PackageDependencyTreeCallout
+      severity="deprecated"
+      icon="i-lucide:octagon-alert"
+      :packages="deprecatedPackages"
+      :title="$t('package.deprecated.tree_found', deprecatedPackages.length)"
+      :expand="$t('package.deprecated.show_all', { count: deprecatedPackages.length })"
+      :getSeverity="() => 'deprecated'"
+    >
+      <template #item="{ pkg }">
+        <p class="text-xs text-fg-muted m-0 line-clamp-2">{{ pkg.message }}</p>
+      </template>
+    </PackageDependencyTreeCallout>
   </section>
 </template>
