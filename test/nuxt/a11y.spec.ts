@@ -227,6 +227,7 @@ import {
   NoodleBlenderLogo,
   NoodleBlenderArt,
   LinkBase,
+  Callout,
   CallToAction,
   ChangelogCard,
   ChangelogSkeleton,
@@ -759,6 +760,77 @@ describe('component accessibility audits', () => {
     it('should have no accessibility violations', async () => {
       const component = await mountSuspended(BackButton)
       expect(component.find('button').exists()).toBe(true)
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('Callout', () => {
+    it.each(['none', 'info', 'warning', 'danger', 'notice'] as const)(
+      'should have no accessibility violations with %s severity',
+      async severity => {
+        const component = await mountSuspended(Callout, {
+          props: { severity },
+          slots: { default: '<p>Callout content</p>' },
+        })
+        const results = await runAxe(component)
+        expect(results.violations).toEqual([])
+      },
+    )
+
+    it('should have no accessibility violations with title and icon', async () => {
+      const component = await mountSuspended(Callout, {
+        props: { severity: 'warning' },
+        slots: {
+          title: '<span>Heads up</span>',
+          default: '<p>Callout content</p>',
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with icon disabled', async () => {
+      const component = await mountSuspended(Callout, {
+        props: { severity: 'info', icon: false },
+        slots: {
+          title: '<span>Note</span>',
+          default: '<p>Callout content</p>',
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with sm size', async () => {
+      const component = await mountSuspended(Callout, {
+        props: { severity: 'danger', size: 'sm' },
+        slots: { default: '<p>Small callout content</p>' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with links and code in body', async () => {
+      const component = await mountSuspended(Callout, {
+        props: { severity: 'info' },
+        slots: {
+          default: '<p>See <a href="/docs">the docs</a> or run <code>npm install</code>.</p>',
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations as an accordion', async () => {
+      const component = await mountSuspended(Callout, {
+        props: { severity: 'notice', variant: 'accordion' },
+        slots: {
+          title: '<span>Details</span>',
+          accordionLabel: '<span>Show more</span>',
+          default: '<p>Accordion content</p>',
+        },
+      })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
     })
