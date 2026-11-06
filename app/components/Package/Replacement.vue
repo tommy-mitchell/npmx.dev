@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ModuleReplacement, ModuleReplacementMapping } from 'module-replacements'
 import { resolveDocUrl } from 'module-replacements'
+import { LinkBase } from '#components'
 import { getReplacementDescription, getReplacementNodeVersion } from '~/utils/module-replacements'
 
 const props = defineProps<{
@@ -18,14 +19,14 @@ const replacementDescription = useMarkdown(() => ({
 </script>
 
 <template>
-  <div
-    class="border border-amber-600/40 bg-amber-500/10 rounded-lg px-3 py-2 text-base text-amber-800 dark:text-amber-400"
+  <Callout
+    :severity="replacement.type === 'native' ? 'warning' : 'info'"
+    icon="i-lucide:lightbulb"
     data-testid="replacement-card"
   >
-    <h2 class="font-medium mb-1 flex items-center gap-2">
-      <span class="i-lucide:lightbulb w-4 h-4" aria-hidden="true" />
-      {{ $t('package.replacement.title') }}
-    </h2>
+    <template v-slot:title>
+      <p>{{ $t('package.replacement.title') }}</p>
+    </template>
     <p>
       <i18n-t
         v-if="nodeVersion && replacement.type === 'native'"
@@ -34,9 +35,9 @@ const replacementDescription = useMarkdown(() => ({
       >
         <template #replacement>
           <span v-if="replacementDescription" v-html="replacementDescription" />
-          <span v-else
-            ><code>{{ replacement.id }}</code></span
-          >
+          <span v-else>
+            <code>{{ replacement.id }}</code>
+          </span>
         </template>
         <template #nodeVersion>
           {{ nodeVersion }}
@@ -49,39 +50,30 @@ const replacementDescription = useMarkdown(() => ({
       >
         <template #replacement>
           <span v-if="replacementDescription" v-html="replacementDescription" />
-          <span v-else
-            ><code>{{ replacement.id }}</code></span
-          >
+          <span v-else>
+            <code>{{ replacement.id }}</code>
+          </span>
         </template>
       </i18n-t>
       <template v-else-if="replacement.type === 'documented'">
         {{ $t('package.replacement.documented') }}
       </template>
-      <template v-else-if="replacement.type === 'removal'">
-        <span v-html="replacementDescription" />
-      </template>
-      <template v-else-if="replacement.type === 'simple'">
+      <template v-else-if="replacement.type === 'removal' || replacement.type === 'simple'">
         <span v-html="replacementDescription" />
       </template>
       <template v-else>
         {{ $t('package.replacement.none') }}
       </template>
-      <a
-        v-if="externalUrl"
-        :href="externalUrl"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="inline-flex items-center gap-1 ms-1 underline underline-offset-4 decoration-amber-600/60 dark:decoration-amber-400/50 hover:decoration-fg transition-colors"
-      >
+      {{ ' ' }}
+      <LinkBase v-if="externalUrl" :to="externalUrl" class="text-inherit decoration-inherit">
         {{ $t('package.replacement.learn_more') }}
-        <span class="i-lucide:external-link w-3 h-3" aria-hidden="true" />
-      </a>
+      </LinkBase>
     </p>
-    <div v-if="replacement.type === 'simple' && replacement.example">
-      <strong class="block mb-1.5">{{ $t('package.replacement.example') }}</strong>
+    <template v-if="replacement.type === 'simple' && replacement.example">
+      <p>{{ $t('package.replacement.example') }}</p>
       <pre
-        class="bg-amber-800/10 dark:bg-amber-950/30 p-2 rounded border border-amber-700/20 overflow-x-auto text-xs font-mono leading-relaxed"
+        class="p-2 rounded border overflow-x-auto text-xs font-mono leading-relaxed"
       ><code>{{ replacement.example }}</code></pre>
-    </div>
-  </div>
+    </template>
+  </Callout>
 </template>
