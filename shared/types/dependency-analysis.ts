@@ -140,16 +140,20 @@ export interface VulnerabilitySummary {
 /** Depth in dependency tree */
 export type DependencyDepth = 'root' | 'direct' | 'transitive'
 
-/**
- * Vulnerability info for a single package in the tree
- */
-export interface PackageVulnerabilityInfo {
+/** Basic info for a package in the tree */
+export interface PackageDependencyInfo {
   name: string
   version: string
   /** Depth in dependency tree: root (0), direct (1), transitive (2+) */
   depth: DependencyDepth
   /** Dependency path from root package */
   path: string[]
+}
+
+/**
+ * Vulnerability info for a single package in the tree
+ */
+export interface PackageVulnerabilityInfo extends PackageDependencyInfo {
   vulnerabilities: VulnerabilitySummary[]
   counts: VulnerabilityCounts
 }
@@ -157,13 +161,7 @@ export interface PackageVulnerabilityInfo {
 /**
  * Deprecated package info in the dependency tree
  */
-export interface DeprecatedPackageInfo {
-  name: string
-  version: string
-  /** Depth in dependency tree: root (0), direct (1), transitive (2+) */
-  depth: DependencyDepth
-  /** Dependency path from root package */
-  path: string[]
+export interface DeprecatedPackageInfo extends PackageDependencyInfo {
   /** Deprecation message */
   message: string
 }
