@@ -5,33 +5,33 @@ const meta = {
   component: Callout,
   tags: ['autodocs'],
   argTypes: {
-    severity: {
+    'variant': {
       control: 'select',
       options: ['none', 'info', 'warning', 'danger', 'notice'],
     },
-    variant: {
+    'type': {
       control: 'select',
       options: ['block', 'accordion'],
     },
-    size: {
+    'size': {
       control: 'select',
       options: ['sm', 'md'],
     },
-    icon: {
+    'icon': {
       control: 'text',
     },
-    default: {
+    'default': {
       control: 'text',
     },
-    title: {
+    'title': {
       control: 'text',
     },
-    accordionLabel: {
+    'accordion-label': {
       control: 'text',
     },
   },
   args: {
-    severity: 'info',
+    variant: 'info',
     icon: undefined,
     title: 'Heads up',
     default: 'Something you might want to know about this package.',
@@ -40,9 +40,9 @@ const meta = {
     components: { Callout },
     setup: () => ({ args }),
     template: `
-      <Callout :severity="args.severity" :variant="args.variant" :icon="args.icon" :size="args.size">
+      <Callout :variant="args.variant" :type="args.type" :icon="args.icon" :size="args.size">
         <template v-if="args.title" #title>{{ args.title }}</template>
-        <template v-if="args.accordionLabel" #accordionLabel>{{ args.accordionLabel }}</template>
+        <template v-if="args['accordion-label']" #accordion-label>{{ args['accordion-label'] }}</template>
         {{ args.default }}
       </Callout>
     `,
@@ -58,7 +58,7 @@ export const Info: Story = {}
 /** Warning variant. */
 export const Warning: Story = {
   args: {
-    severity: 'warning',
+    variant: 'warning',
     title: 'Something went wrong',
     default: 'We could not load this data. Please try again.',
   },
@@ -67,7 +67,7 @@ export const Warning: Story = {
 /** Danger variant. */
 export const Danger: Story = {
   args: {
-    severity: 'danger',
+    variant: 'danger',
     title: 'Something went wrong',
     default: 'We could not load this data. Please try again.',
   },
@@ -76,14 +76,14 @@ export const Danger: Story = {
 /** None variant. */
 export const None: Story = {
   args: {
-    severity: 'none',
+    variant: 'none',
   },
 }
 
 /** Notice variant. */
 export const Notice: Story = {
   args: {
-    severity: 'notice',
+    variant: 'notice',
   },
 }
 
@@ -127,11 +127,11 @@ export const Small: Story = {
 
 export const Accordion: Story = {
   args: {
-    severity: 'danger',
-    variant: 'accordion',
-    title: 'Vulnerabilities found',
-    accordionLabel: '2 high, 1 moderate',
-    default: loremIpsum,
+    'variant': 'danger',
+    'type': 'accordion',
+    'title': 'Vulnerabilities found',
+    'accordion-label': '2 high, 1 moderate',
+    'default': loremIpsum,
   },
 }
 
@@ -147,9 +147,9 @@ export const Replacement: Story = {
     components: { Callout },
     setup: () => ({ args }),
     template: `
-      <Callout :severity="args.severity" :variant="args.variant" :icon="args.icon" :size="args.size">
+      <Callout :variant="args.variant" :type="args.type" :icon="args.icon" :size="args.size">
         <template v-if="args.title" #title>{{ args.title }}</template>
-        <template v-if="args.accordionLabel" #accordionLabel>{{ args.accordionLabel }}</template>
+        <template v-if="args['accordion-label']" #accordion-label>{{ args['accordion-label'] }}</template>
         <p>{{ args.default }} <a href="#" class="underline hover:text-white">Learn more</a></p>
         <p>Example <code class="p-1 rounded border">code</code>:</p>
         <pre class="p-2 rounded border text-sm"><code>{{ args.code }}</code></pre>

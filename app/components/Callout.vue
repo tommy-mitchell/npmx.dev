@@ -1,24 +1,24 @@
 <script setup lang="ts">
 import type { IconClass } from '~/types/icon'
-export type CalloutSeverity = 'none' | 'info' | 'warning' | 'danger' | 'notice'
+export type CalloutVariant = 'none' | 'info' | 'warning' | 'danger' | 'notice'
 
 withDefaults(
   defineProps<{
-    severity: CalloutSeverity
+    variant: CalloutVariant
     /** @default 'block' */
-    variant?: 'block' | 'accordion'
+    type?: 'block' | 'accordion'
     /** A custom icon to use, or `false` to disable icon rendering. */
     icon?: IconClass | false
     /** @default 'md' */
     size?: 'sm' | 'md'
   }>(),
-  { variant: 'block', icon: undefined, size: 'md' },
+  { type: 'block', icon: undefined, size: 'md' },
 )
 
 defineSlots<{
-  default: () => unknown
-  title?: () => unknown
-  accordionLabel?: () => unknown
+  'default': () => unknown
+  'title'?: () => unknown
+  'accordion-label'?: () => unknown
 }>()
 
 const [DefineHeader, ReuseHeader] = createReusableTemplate()
@@ -38,12 +38,12 @@ const [DefineBody, ReuseBody] = createReusableTemplate()
     </div>
   </DefineBody>
 
-  <aside role="note" :data-severity="severity" :data-variant="variant" :data-size="size">
-    <details v-if="variant === 'accordion'">
+  <aside role="note" :data-variant="variant" :data-type="type" :data-size="size">
+    <details v-if="type === 'accordion'">
       <summary>
         <ReuseHeader />
-        <div v-if="$slots.accordionLabel" class="label">
-          <slot name="accordionLabel" />
+        <div v-if="$slots['accordion-label']" class="accordion-label">
+          <slot name="accordion-label" />
         </div>
         <span class="accordion" />
       </summary>
@@ -68,7 +68,7 @@ aside {
     @apply text-base gap-col-2;
   }
 
-  &[data-severity='none'] {
+  &[data-variant='none'] {
     --callout-border: var(--border);
     --callout-border-opacity: 100%;
     @apply bg-bg-subtle text-fg-muted;
@@ -82,7 +82,7 @@ aside {
     }
   }
 
-  &[data-severity='info'] {
+  &[data-variant='info'] {
     --callout-border: theme('colors.blue.600');
     --callout-border-opacity: 30%;
     @apply bg-blue-500/10 text-blue-700 dark:text-blue-400;
@@ -96,7 +96,7 @@ aside {
     }
   }
 
-  &[data-severity='warning'] {
+  &[data-variant='warning'] {
     --callout-border: theme('colors.amber.600');
     --callout-border-opacity: 40%;
     @apply bg-amber-500/10 text-amber-800 dark:text-amber-400;
@@ -110,9 +110,7 @@ aside {
     }
   }
 
-  /* TODO: links, code */
-
-  &[data-severity='danger'] {
+  &[data-variant='danger'] {
     --callout-border: theme('colors.red.400');
     --callout-border-opacity: 30%;
     @apply bg-red-500/8 text-red-800 dark:text-red-300;
@@ -126,7 +124,7 @@ aside {
     }
   }
 
-  &[data-severity='notice'] {
+  &[data-variant='notice'] {
     --callout-border: theme('colors.purple.600');
     --callout-border-opacity: 40%;
     @apply bg-purple-500/10 text-purple-700 dark:text-purple-400;
@@ -173,14 +171,14 @@ aside {
   }
 }
 
-aside[data-variant='accordion'] {
+aside[data-type='accordion'] {
   @apply block p-0 @container/callout;
 
   & > details {
     & > summary {
       @apply grid gap-col-2 items-center cursor-pointer px-3 py-2;
       @apply rounded-md transition-colors duration-200 hover:bg-white/40 dark:hover:bg-white/10 focus-visible:outline-none! focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/70;
-      grid-template-areas: 'icon title label accordion';
+      grid-template-areas: 'icon title accordion-label accordion';
       grid-template-columns: max-content 1fr max-content max-content;
     }
 
@@ -194,19 +192,19 @@ aside[data-variant='accordion'] {
   grid-area: icon;
   @apply size-1em!;
 
-  :where([data-variant='block']) & {
+  :where([data-type='block']) & {
     margin-block-start: calc((1lh - 1em) / 2);
   }
 
-  :where([data-severity='none'], [data-severity='info'], [data-severity='notice']) & {
+  :where([data-variant='none'], [data-variant='info'], [data-variant='notice']) & {
     @apply i-lucide:info;
   }
 
-  :where([data-severity='warning']) & {
+  :where([data-variant='warning']) & {
     @apply i-lucide:triangle-alert;
   }
 
-  :where([data-severity='danger']) & {
+  :where([data-variant='danger']) & {
     @apply i-lucide:octagon-alert;
   }
 }
@@ -216,8 +214,8 @@ aside[data-variant='accordion'] {
   @apply font-medium;
 }
 
-.label {
-  grid-area: label;
+.accordion-label {
+  grid-area: accordion-label;
   @apply text-xs op-90 dark:op-80 hidden @md/callout:inline;
 }
 

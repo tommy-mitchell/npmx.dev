@@ -770,7 +770,7 @@ describe('component accessibility audits', () => {
       'should have no accessibility violations with %s severity',
       async severity => {
         const component = await mountSuspended(Callout, {
-          props: { severity },
+          props: { variant: severity },
           slots: { default: '<p>Callout content</p>' },
         })
         const results = await runAxe(component)
@@ -780,7 +780,7 @@ describe('component accessibility audits', () => {
 
     it('should have no accessibility violations with title and icon', async () => {
       const component = await mountSuspended(Callout, {
-        props: { severity: 'warning' },
+        props: { variant: 'warning' },
         slots: {
           title: '<span>Heads up</span>',
           default: '<p>Callout content</p>',
@@ -792,7 +792,7 @@ describe('component accessibility audits', () => {
 
     it('should have no accessibility violations with icon disabled', async () => {
       const component = await mountSuspended(Callout, {
-        props: { severity: 'info', icon: false },
+        props: { variant: 'info', icon: false },
         slots: {
           title: '<span>Note</span>',
           default: '<p>Callout content</p>',
@@ -804,7 +804,7 @@ describe('component accessibility audits', () => {
 
     it('should have no accessibility violations with sm size', async () => {
       const component = await mountSuspended(Callout, {
-        props: { severity: 'danger', size: 'sm' },
+        props: { variant: 'danger', size: 'sm' },
         slots: { default: '<p>Small callout content</p>' },
       })
       const results = await runAxe(component)
@@ -813,7 +813,7 @@ describe('component accessibility audits', () => {
 
     it('should have no accessibility violations with links and code in body', async () => {
       const component = await mountSuspended(Callout, {
-        props: { severity: 'info' },
+        props: { variant: 'info' },
         slots: {
           default: '<p>See <a href="/docs">the docs</a> or run <code>npm install</code>.</p>',
         },
@@ -824,7 +824,7 @@ describe('component accessibility audits', () => {
 
     it('should have no accessibility violations as an accordion', async () => {
       const component = await mountSuspended(Callout, {
-        props: { severity: 'notice', variant: 'accordion' },
+        props: { variant: 'notice', type: 'accordion' },
         slots: {
           title: '<span>Details</span>',
           accordionLabel: '<span>Show more</span>',
